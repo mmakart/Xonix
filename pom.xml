@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.mmakart</groupId>
-    <artifactId>MmakartXonix</artifactId>
+    <artifactId>Xonix</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
@@ -37,7 +37,7 @@
                         <!-- Usage: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.github.mmakart.MmakartXonix.App</mainClass>
+                            <mainClass>com.github.mmakart.Xonix.App</mainClass>
                         </configuration>
                     </execution>
                 </executions>
