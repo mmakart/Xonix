@@ -2,7 +2,7 @@ package com.github.mmakart.Xonix.Balls;
 
 public class Direction {
 	private int toDown, toRight;
-	
+
 	public Direction(int toRight, int toDown) {
 		this.toRight = toRight;
 		this.toDown = toDown;

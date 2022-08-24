@@ -10,41 +10,34 @@ public class OuterBall extends Unit {
 		super(x, y, direction);
 	}
 
-	//TODO handle collation with another ball
+	// TODO handle collation with another ball
 	@Override
 	public void move(GameState gameState) {
 		int tryX = x + direction.getToRight();
 		int tryY = y + direction.getToDown();
 		Cell[][] cells = gameState.getField().getCells();
-		
+
 		CellType type1, type2, type3;
 		type1 = getCellType1(cells, tryY, x);
 		type2 = getCellType2(cells, tryY, tryX);
 		type3 = getCellType3(cells, y, tryX);
-		
-		if (type1 == CellType.OUTER
-				&& type2 == CellType.OUTER
-				&& type3 == CellType.OUTER) {
+
+		if (type1 == CellType.OUTER && type2 == CellType.OUTER && type3 == CellType.OUTER) {
 			// direction doesn't change
-		} else if(type1 == CellType.OUTER
-				&& type2 == CellType.INNER
-				&& type3 == CellType.OUTER
-				|| type1 == CellType.INNER
-				&& type3 == CellType.INNER) {
+		} else if (type1 == CellType.OUTER && type2 == CellType.INNER && type3 == CellType.OUTER
+				|| type1 == CellType.INNER && type3 == CellType.INNER) {
 			direction.setToRight(-direction.getToRight());
 			direction.setToDown(-direction.getToDown());
-		} else if (type1 == CellType.INNER
-				&& type3 == CellType.OUTER) {
+		} else if (type1 == CellType.INNER && type3 == CellType.OUTER) {
 			direction.setToDown(-direction.getToDown());
-		} else if (type1 == CellType.OUTER
-				&& type3 == CellType.INNER) {
+		} else if (type1 == CellType.OUTER && type3 == CellType.INNER) {
 			direction.setToRight(-direction.getToRight());
-		} //else TODO handle collation with CellType.DRAWING
-		
+		} // else TODO handle collation with CellType.DRAWING
+
 		x += direction.getToRight();
 		y += direction.getToDown();
 	}
-	
+
 	private CellType getCellType1(Cell[][] cells, int tryY, int x) {
 		if (tryY < 0 || tryY >= cells.length) {
 			return CellType.INNER;
@@ -74,5 +67,5 @@ public class OuterBall extends Unit {
 		}
 		return CellType.OUTER;
 	}
-	
+
 }

@@ -11,7 +11,7 @@ public abstract class Unit {
 		this.y = y;
 		this.direction = new Direction(0, 0);
 	}
-	
+
 	public Unit(int x, int y, Direction direction) {
 		this(x, y);
 		this.direction = direction;

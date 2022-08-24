@@ -25,7 +25,7 @@ public class App extends Application {
 	private GameState gameState;
 	private Canvas canvas;
 	private GraphicsContext gc;
-	
+
 	private final int APP_WIDTH = 640;
 	private final int APP_HEIGHT = 480;
 	private final int CELL_SIZE = 16;
@@ -39,21 +39,21 @@ public class App extends Application {
 	private final int FIELD_HEIGHT_IN_CELLS = FIELD_HEIGHT / CELL_SIZE;
 	private final int TICK_DURATION_IN_MILLISECONDS = 150;
 
-    @Override
-    public void start(Stage stage) {
-    	StackPane root = initRoot();
-    	Scene scene = new Scene(root, APP_WIDTH, APP_HEIGHT);
+	@Override
+	public void start(Stage stage) {
+		StackPane root = initRoot();
+		Scene scene = new Scene(root, APP_WIDTH, APP_HEIGHT);
 		gc = canvas.getGraphicsContext2D();
-        stage.setScene(scene);
-        stage.show();
-        
-        startGame();
-    }
+		stage.setScene(scene);
+		stage.show();
 
-    private StackPane initRoot() {
+		startGame();
+	}
+
+	private StackPane initRoot() {
 		StackPane root = new StackPane();
 		canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-		
+
 		canvas.setOnKeyPressed((e) -> {
 			KeyCode key = e.getCode();
 			if (key.equals(KeyCode.UP)) {
@@ -68,16 +68,16 @@ public class App extends Application {
 				gameState.getPlayer().setDirection(Player.STOP);
 			}
 		});
-		
+
 		canvas.setFocusTraversable(true);
-		
+
 		root.getChildren().add(canvas);
 		return root;
 	}
 
 	private void startGame() {
 		initGame();
-		
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -86,11 +86,11 @@ public class App extends Application {
 					drawUnits();
 					drawLowerPane();
 					doLogic();
-					
+
 					if (gameState.isGameOver()) {
 						break;
 					}
-					
+
 					try {
 						Thread.sleep(TICK_DURATION_IN_MILLISECONDS);
 					} catch (InterruptedException e) {
@@ -100,19 +100,18 @@ public class App extends Application {
 				}
 			}
 
-			
 		}).start();
 	}
-	
+
 	private void doLogic() {
 		for (InnerBall inner : gameState.getInnerBalls()) {
 			inner.move(gameState);
 		}
-		
+
 		for (OuterBall outer : gameState.getOuterBalls()) {
 			outer.move(gameState);
 		}
-		
+
 		gameState.getPlayer().move(gameState);
 	}
 
@@ -125,40 +124,31 @@ public class App extends Application {
 		List<InnerBall> inners = gameState.getInnerBalls();
 		List<OuterBall> outers = gameState.getOuterBalls();
 		Player player = gameState.getPlayer();
-		
+
 		gc.setFill(Color.WHITE);
 		for (var inner : inners) {
-			gc.fillOval(inner.getX() * CELL_SIZE,
-					inner.getY() * CELL_SIZE,
-					CELL_SIZE,
-					CELL_SIZE);
+			gc.fillOval(inner.getX() * CELL_SIZE, inner.getY() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 		}
-		
+
 		gc.setFill(Color.BLACK);
 		for (var outer : outers) {
-			gc.fillOval(outer.getX() * CELL_SIZE,
-					outer.getY() * CELL_SIZE,
-					CELL_SIZE,
-					CELL_SIZE);
+			gc.fillOval(outer.getX() * CELL_SIZE, outer.getY() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 		}
-		
+
 		gc.setFill(Color.RED);
-		gc.fillOval(player.getX() * CELL_SIZE,
-				player.getY() * CELL_SIZE,
-				CELL_SIZE,
-				CELL_SIZE);
+		gc.fillOval(player.getX() * CELL_SIZE, player.getY() * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 	}
-	
+
 	private void drawField() {
 		gc.clearRect(0, 0, FIELD_WIDTH, FIELD_HEIGHT);
-		
+
 		final int height = gameState.getField().getHeight();
 		final int width = gameState.getField().getWidth();
-		
+
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				CellType type = gameState.getField().getCells()[i][j].getCellType();
-				
+
 				switch (type) {
 				case OUTER:
 					gc.setFill(Color.GREENYELLOW);
@@ -170,27 +160,21 @@ public class App extends Application {
 					gc.setFill(Color.WHITE);
 					break;
 				}
-				
+
 				gc.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 			}
 		}
 	}
 
 	private void initGame() {
-		gameState = new GameState(
-				FIELD_WIDTH_IN_CELLS,
-				FIELD_HEIGHT_IN_CELLS,
-				new Player(0, 0),
-				new ArrayList<>(Arrays.asList(
-						new InnerBall(3, 5, new Direction(1, -1)),
-						new InnerBall(3, 8, new Direction(-1, 1)),
-						new InnerBall(4, 5, new Direction(-1, -1)))),
-				new ArrayList<>(Arrays.asList(
-						new OuterBall(6, FIELD_HEIGHT_IN_CELLS - 1, new Direction(1, 1)))));
+		gameState = new GameState(FIELD_WIDTH_IN_CELLS, FIELD_HEIGHT_IN_CELLS, new Player(0, 0),
+				new ArrayList<>(Arrays.asList(new InnerBall(3, 5, new Direction(1, -1)),
+						new InnerBall(3, 8, new Direction(-1, 1)), new InnerBall(4, 5, new Direction(-1, -1)))),
+				new ArrayList<>(Arrays.asList(new OuterBall(6, FIELD_HEIGHT_IN_CELLS - 1, new Direction(1, 1)))));
 	}
 
 	public static void main(String[] args) {
-        launch();
-    }
+		launch();
+	}
 
 }

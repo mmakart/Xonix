@@ -1,13 +1,13 @@
 package com.github.mmakart.Xonix.Field;
 
 public class Cell {
-	CellType cellType;	
-	
+	CellType cellType;
+
 	public Cell(CellType cellType) {
 		super();
 		this.cellType = cellType;
 	}
-	
+
 	public CellType getCellType() {
 		return cellType;
 	}
