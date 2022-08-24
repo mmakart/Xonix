@@ -8,6 +8,7 @@ import com.github.mmakart.Xonix.Balls.Direction;
 import com.github.mmakart.Xonix.Balls.InnerBall;
 import com.github.mmakart.Xonix.Balls.OuterBall;
 import com.github.mmakart.Xonix.Balls.Player;
+import com.github.mmakart.Xonix.Field.Cell;
 import com.github.mmakart.Xonix.Field.CellType;
 
 import javafx.application.Application;
@@ -37,7 +38,12 @@ public class App extends Application {
 	private final int FIELD_WIDTH = CANVAS_WIDTH;
 	private final int FIELD_WIDTH_IN_CELLS = FIELD_WIDTH / CELL_SIZE;
 	private final int FIELD_HEIGHT_IN_CELLS = FIELD_HEIGHT / CELL_SIZE;
+	private final int INITIAL_PLAYER_X = FIELD_WIDTH_IN_CELLS / 2;
+	private final int INITIAL_PLAYER_Y = 0;
+	private final int INITIAL_OUTER_BALL_X = FIELD_WIDTH_IN_CELLS / 2;
+	private final int INITIAL_OUTER_BALL_Y = FIELD_HEIGHT_IN_CELLS - 1;
 	private final int TICK_DURATION_IN_MILLISECONDS = 150;
+	private final int DEATH_DURATION_IN_MILLISECONDS = 1000;
 
 	@Override
 	public void start(Stage stage) {
@@ -88,7 +94,14 @@ public class App extends Application {
 					doLogic();
 
 					if (gameState.isGameOver()) {
-						break;
+						continueGame();
+						gameState.setGameOver(false);
+						
+						try {
+							Thread.sleep(DEATH_DURATION_IN_MILLISECONDS);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 					}
 
 					try {
@@ -101,6 +114,26 @@ public class App extends Application {
 			}
 
 		}).start();
+	}
+
+	private void continueGame() {
+		Player player = gameState.getPlayer();
+		player.setX(INITIAL_PLAYER_X);
+		player.setY(INITIAL_PLAYER_Y);
+		player.setDirection(Player.STOP);
+		
+		List<OuterBall> outerBalls = gameState.getOuterBalls();
+		outerBalls.clear();
+		outerBalls.add(new OuterBall(INITIAL_OUTER_BALL_X, INITIAL_OUTER_BALL_Y, new Direction(1, 1)));
+		
+		Cell[][] cells = gameState.getField().getCells();
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[0].length; j++) {
+				if (cells[i][j].getCellType() == CellType.DRAWING) {
+					cells[i][j].setCellType(CellType.INNER);
+				}
+			}
+		}
 	}
 
 	private void doLogic() {
@@ -167,10 +200,12 @@ public class App extends Application {
 	}
 
 	private void initGame() {
-		gameState = new GameState(FIELD_WIDTH_IN_CELLS, FIELD_HEIGHT_IN_CELLS, new Player(0, 0),
+		gameState = new GameState(FIELD_WIDTH_IN_CELLS, FIELD_HEIGHT_IN_CELLS,
+				new Player(INITIAL_PLAYER_X, INITIAL_PLAYER_Y),
 				new ArrayList<>(Arrays.asList(new InnerBall(3, 5, new Direction(1, -1)),
 						new InnerBall(3, 8, new Direction(-1, 1)), new InnerBall(4, 5, new Direction(-1, -1)))),
-				new ArrayList<>(Arrays.asList(new OuterBall(6, FIELD_HEIGHT_IN_CELLS - 1, new Direction(1, 1)))));
+				new ArrayList<>(
+						Arrays.asList(new OuterBall(INITIAL_OUTER_BALL_X, INITIAL_OUTER_BALL_Y, new Direction(1, 1)))));
 	}
 
 	public static void main(String[] args) {
