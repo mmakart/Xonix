@@ -1,5 +1,6 @@
 package com.github.mmakart.Xonix.Balls;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.github.mmakart.Xonix.GameState;
@@ -61,6 +62,13 @@ public class Player extends Unit {
 		// assumption that direction.getToRight() == 0
 		if (direction.getToDown() != 0) {
 			foundLeft = areThereInnerBallsInArea(visited, cells, x - 1, y, innerBalls);
+
+			for (int i = 0; i < visited.length; i++) {
+				for (int j = 0; j < visited[0].length; j++) {
+					visited[i][j] = false;
+				}
+			}
+
 			foundRight = areThereInnerBallsInArea(visited, cells, x + 1, y, innerBalls);
 
 			if (foundLeft && foundRight) {
@@ -73,8 +81,15 @@ public class Player extends Unit {
 				fillArea(cells, x - 1, y);
 				fillArea(cells, x + 1, y);
 			}
-		} else /* assumption that direction.getToRight() == 0 */ {
+		} else /* assumption that direction.getToDown() == 0 */ {
 			foundUp = areThereInnerBallsInArea(visited, cells, x, y - 1, innerBalls);
+
+			for (int i = 0; i < visited.length; i++) {
+				for (int j = 0; j < visited[0].length; j++) {
+					visited[i][j] = false;
+				}
+			}
+
 			foundDown = areThereInnerBallsInArea(visited, cells, x, y + 1, innerBalls);
 
 			if (foundUp && foundDown) {
