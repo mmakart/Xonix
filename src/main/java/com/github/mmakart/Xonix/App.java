@@ -202,8 +202,8 @@ public class App extends Application {
 	private void initGame() {
 		gameState = new GameState(FIELD_WIDTH_IN_CELLS, FIELD_HEIGHT_IN_CELLS,
 				new Player(INITIAL_PLAYER_X, INITIAL_PLAYER_Y),
-				new ArrayList<>(Arrays.asList(new InnerBall(3, 5, new Direction(1, -1)),
-						new InnerBall(3, 8, new Direction(-1, 1)), new InnerBall(4, 5, new Direction(-1, -1)))),
+				new ArrayList<>(Arrays.asList(/*new InnerBall(3, 5, new Direction(1, -1)),*/
+						new InnerBall(3, 8, new Direction(-1, 1)), new InnerBall(24, 5, new Direction(-1, -1)))),
 				new ArrayList<>(
 						Arrays.asList(new OuterBall(INITIAL_OUTER_BALL_X, INITIAL_OUTER_BALL_Y, new Direction(1, 1)))));
 	}

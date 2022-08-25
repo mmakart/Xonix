@@ -1,5 +1,7 @@
 package com.github.mmakart.Xonix.Balls;
 
+import java.util.List;
+
 import com.github.mmakart.Xonix.GameState;
 import com.github.mmakart.Xonix.Field.Cell;
 import com.github.mmakart.Xonix.Field.CellType;
@@ -25,9 +27,11 @@ public class Player extends Unit {
 		int tryX = x + direction.getToRight();
 		int tryY = y + direction.getToDown();
 		Cell[][] cells = gameState.getField().getCells();
+		Player player = gameState.getPlayer();
 
 		if (cells[y][x].getCellType() == CellType.DRAWING && cells[tryY][tryX].getCellType() == CellType.OUTER) {
-			fillCutArea(cells, x, y);
+			fillCutArea(gameState);
+			player.setDirection(STOP);
 		}
 
 		if (tryX >= 0 && tryX < cells[0].length) {
@@ -43,9 +47,101 @@ public class Player extends Unit {
 		}
 	}
 
-	private void fillCutArea(Cell[][] cells, int x, int y) {
-		// TODO Auto-generated method stub
-		System.out.println("Mock filling " + x + " " + y);
+	private void fillCutArea(GameState gameState) {
+		boolean foundLeft = false;
+		boolean foundRight = false;
+		boolean foundUp = false;
+		boolean foundDown = false;
+
+		Cell[][] cells = gameState.getField().getCells();
+		List<InnerBall> innerBalls = gameState.getInnerBalls();
+
+		boolean[][] visited = new boolean[cells.length][cells[0].length];
+
+		// assumption that direction.getToRight() == 0
+		if (direction.getToDown() != 0) {
+			foundLeft = areThereInnerBallsInArea(visited, cells, x - 1, y, innerBalls);
+			foundRight = areThereInnerBallsInArea(visited, cells, x + 1, y, innerBalls);
+
+			if (foundLeft && foundRight) {
+				fillDrawingCells(cells);
+			} else if (foundLeft) {
+				fillArea(cells, x + 1, y);
+			} else if (foundRight) {
+				fillArea(cells, x - 1, y);
+			} else {
+				fillArea(cells, x - 1, y);
+				fillArea(cells, x + 1, y);
+			}
+		} else /* assumption that direction.getToRight() == 0 */ {
+			foundUp = areThereInnerBallsInArea(visited, cells, x, y - 1, innerBalls);
+			foundDown = areThereInnerBallsInArea(visited, cells, x, y + 1, innerBalls);
+
+			if (foundUp && foundDown) {
+				fillDrawingCells(cells);
+			} else if (foundUp) {
+				fillArea(cells, x, y + 1);
+			} else if (foundDown) {
+				fillArea(cells, x, y - 1);
+			}
+		}
+
+		fillDrawingCells(cells);
+	}
+
+	private void fillArea(Cell[][] cells, int x, int y) {
+		if (cells[y][x].getCellType() == CellType.DRAWING) {
+			cells[y][x].setCellType(CellType.OUTER);
+			return;
+		}
+
+		if (cells[y][x].getCellType() == CellType.OUTER) {
+			return;
+		}
+
+		if (cells[y][x].getCellType() == CellType.INNER) {
+			cells[y][x].setCellType(CellType.OUTER);
+			fillArea(cells, x, y - 1);
+			fillArea(cells, x + 1, y);
+			fillArea(cells, x, y + 1);
+			fillArea(cells, x - 1, y);
+		}
+	}
+
+	private void fillDrawingCells(Cell[][] cells) {
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[0].length; j++) {
+				if (cells[i][j].getCellType() == CellType.DRAWING) {
+					cells[i][j].setCellType(CellType.OUTER);
+				}
+			}
+		}
+	}
+
+	private boolean areThereInnerBallsInArea(boolean[][] visited, Cell[][] cells, int x, int y,
+			List<InnerBall> innerBalls) {
+		CellType type = cells[y][x].getCellType();
+
+		if (y < 0 || y >= cells.length || x < 0 || x >= cells[0].length) {
+			return false;
+		}
+
+		if (visited[y][x] || type == CellType.OUTER || type == CellType.DRAWING) {
+			return false;
+		}
+
+		for (InnerBall innerBall : innerBalls) {
+			if (innerBall.getX() == x && innerBall.getY() == y) {
+				return true;
+			}
+		}
+
+		visited[y][x] = true;
+
+		return areThereInnerBallsInArea(visited, cells, x, y - 1, innerBalls)
+				|| areThereInnerBallsInArea(visited, cells, x - 1, y, innerBalls)
+				|| areThereInnerBallsInArea(visited, cells, x, y + 1, innerBalls)
+				|| areThereInnerBallsInArea(visited, cells, x + 1, y, innerBalls);
 	}
 
 }
