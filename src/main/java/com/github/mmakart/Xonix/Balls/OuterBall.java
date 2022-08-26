@@ -10,7 +10,6 @@ public class OuterBall extends Unit {
 		super(x, y, direction);
 	}
 
-	// TODO handle collation with another ball
 	@Override
 	public void move(GameState gameState) {
 		int tryX = x + direction.getToRight();
@@ -32,10 +31,19 @@ public class OuterBall extends Unit {
 			direction.setToDown(-direction.getToDown());
 		} else if (type1 == CellType.OUTER && type3 == CellType.INNER) {
 			direction.setToRight(-direction.getToRight());
-		} // else TODO handle collation with CellType.DRAWING
+		}
+		checkCollisionWithPlayer(gameState);
 
 		x += direction.getToRight();
 		y += direction.getToDown();
+	}
+
+	private void checkCollisionWithPlayer(GameState gameState) {
+		Player player = gameState.getPlayer();
+
+		if (Math.abs(x - player.getX()) <= 1 && Math.abs(y - player.getY()) <= 1) {
+			gameState.setGameOver(true);
+		}
 	}
 
 	private CellType getCellType1(Cell[][] cells, int tryY, int x) {
