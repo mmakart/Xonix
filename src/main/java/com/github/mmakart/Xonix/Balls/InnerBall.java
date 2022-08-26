@@ -24,10 +24,6 @@ public class InnerBall extends Unit {
 		CellType type2 = getType2(cells, tryY, tryX);
 		CellType type3 = getType3(cells, y, tryX);
 
-		if (type2 == CellType.DRAWING) {
-			gameState.setGameOver(true);
-		}
-
 		if (type1 == CellType.INNER && type2 == CellType.INNER && type3 == CellType.INNER) {
 			// direction doesn't change
 		} else if (type1 == CellType.INNER && type2 == CellType.OUTER && type3 == CellType.INNER
