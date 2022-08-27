@@ -3,6 +3,7 @@ package com.github.mmakart.Xonix;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.github.mmakart.Xonix.Balls.Direction;
 import com.github.mmakart.Xonix.Balls.InnerBall;
@@ -60,19 +61,17 @@ public class App extends Application {
 		StackPane root = new StackPane();
 		canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 
-		canvas.setOnKeyPressed((e) -> {
-			KeyCode key = e.getCode();
-			if (key.equals(KeyCode.UP)) {
-				gameState.getPlayer().setDirection(Player.TO_UP);
-			} else if (key.equals(KeyCode.DOWN)) {
-				gameState.getPlayer().setDirection(Player.TO_DOWN);
-			} else if (key.equals(KeyCode.LEFT)) {
-				gameState.getPlayer().setDirection(Player.TO_LEFT);
-			} else if (key.equals(KeyCode.RIGHT)) {
-				gameState.getPlayer().setDirection(Player.TO_RIGHT);
-			} else if (key.equals(KeyCode.SPACE)) {
-				gameState.getPlayer().setDirection(Player.STOP);
-			}
+		Map<KeyCode, Direction> keyToDirection = Map.of(
+				KeyCode.UP, Player.TO_UP,
+				KeyCode.RIGHT, Player.TO_RIGHT,
+				KeyCode.DOWN, Player.TO_DOWN,
+				KeyCode.LEFT, Player.TO_LEFT,
+				KeyCode.SPACE, Player.STOP);
+
+		canvas.setOnKeyPressed(event -> {
+			KeyCode key = event.getCode();
+			Direction direction = keyToDirection.get(key);
+			gameState.getPlayer().setDirection(direction);
 		});
 
 		canvas.setFocusTraversable(true);
