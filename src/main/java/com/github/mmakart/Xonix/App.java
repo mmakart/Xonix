@@ -177,22 +177,17 @@ public class App extends Application {
 		final int height = gameState.getField().getHeight();
 		final int width = gameState.getField().getWidth();
 
+		Map<CellType, Color> cellColors = Map.of(
+				CellType.OUTER, Color.GREENYELLOW,
+				CellType.INNER, Color.DARKGREEN,
+				CellType.DRAWING, Color.WHITE);
+
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				CellType type = gameState.getField().getCells()[i][j].getCellType();
-
-				switch (type) {
-				case OUTER:
-					gc.setFill(Color.GREENYELLOW);
-					break;
-				case INNER:
-					gc.setFill(Color.DARKGREEN);
-					break;
-				case DRAWING:
-					gc.setFill(Color.WHITE);
-					break;
-				}
-
+				CellType cellType = gameState.getField().getCells()[i][j].getCellType();
+				Color color = cellColors.get(cellType);
+				
+				gc.setFill(color);
 				gc.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 			}
 		}
