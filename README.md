@@ -2,4 +2,4 @@
 
 ## Example animation
 
-![game animation](img/Xonix1.gif)
+![game animation](src/main/resources/img/Xonix1.gif)
